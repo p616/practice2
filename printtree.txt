@@ -33,7 +33,7 @@ public:
         return max(lH,rH) + 1;
     }
     
-    void bfs(TreeNode *root, vector<vector<string>>& tree, int depth, int cols, int start)
+    void printRoot(TreeNode *root, vector<vector<string>>& tree, int depth, int cols, int start)
     {
         if (root == NULL)
         {
@@ -42,8 +42,8 @@ public:
               
         tree[depth][start+cols/2] = to_string(root->val);
         
-        bfs(root->left, tree, depth+1, cols/2, start);
-        bfs(root->right, tree, depth+1, cols/2, start+cols/2+1);        
+        printRoot(root->left, tree, depth+1, cols/2, start);
+        printRoot(root->right, tree, depth+1, cols/2, start+cols/2+1);        
     }
         
     vector<vector<string>> printTree(TreeNode* root) 
@@ -64,7 +64,7 @@ public:
             tree.push_back(row);            
         }
         
-        bfs(root, tree, 0, cols, 0);
+        printRoot(root, tree, 0, cols, 0);
                
         return tree;
     }
