@@ -1,0 +1,71 @@
+Input:
+     1
+    / \
+   2   3
+    \
+     4
+Output:
+[["", "", "", "1", "", "", ""],
+ ["", "2", "", "", "", "3", ""],
+ ["", "", "4", "", "", "", ""]]
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    int height(TreeNode *root)
+    {
+        if (root == NULL)
+        {
+            return 0;
+        }
+        
+        int lH = height(root->left);
+        int rH = height(root->right);
+        
+        return max(lH,rH) + 1;
+    }
+    
+    void bfs(TreeNode *root, vector<vector<string>>& tree, int depth, int cols, int start)
+    {
+        if (root == NULL)
+        {
+            return;
+        }
+              
+        tree[depth][start+cols/2] = to_string(root->val);
+        
+        bfs(root->left, tree, depth+1, cols/2, start);
+        bfs(root->right, tree, depth+1, cols/2, start+cols/2+1);        
+    }
+        
+    vector<vector<string>> printTree(TreeNode* root) 
+    {  
+        vector<vector<string>> tree;
+        
+        if (root == NULL)
+        {
+            return tree;
+        }
+        
+        int rows = height(root);
+        int cols = pow(2,rows) - 1;
+        
+        for (int i=0; i<rows; ++i)
+        {
+            vector<string> row(cols,"");
+            tree.push_back(row);            
+        }
+        
+        bfs(root, tree, 0, cols, 0);
+               
+        return tree;
+    }
+};
