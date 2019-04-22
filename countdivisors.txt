@@ -1,0 +1,20 @@
+return count of digits in an integer that are divisors of that integer
+
+// Complete the findDigits function below.
+int findDigits(int n) 
+{
+    int count = 0;
+    int target = n;
+
+    while (n > 0)
+    {
+        int digit = (n % 10);
+        if ( (digit > 0) && ((target % digit) == 0) )
+        {
+            count++;
+        }
+        n /= 10;
+    }
+
+    return count;
+}

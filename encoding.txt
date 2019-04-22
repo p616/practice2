@@ -1,0 +1,38 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+string convert(unsigned int  n)
+{
+    string ret = "";
+    if (int <= 0)
+    {
+        cout << "Must be 1 or more";
+        return ret;
+    }
+    
+    while (n > 0)
+    {
+        // rem = 0 : A+26
+        // rem = 1 : A+0
+        // rem = 2 : A+1
+        int rem = (n % 26);
+        char c = 'A' + rem;
+        
+        ret.insert(0, c);    
+            
+        if (n % 26 == 0)
+        {
+            n /= 26;
+            n -= 1;
+        } 
+        else
+        {
+            n /= 26;
+        }  
+    }
+    
+    return ret;
+   
+}
