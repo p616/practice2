@@ -1,0 +1,89 @@
+Evaluate and return value for 
+Reverse Polish Notation
+expression represented by vector
+
+int Solution::evalRPN(vector<string> &A) 
+{
+    set<string> ops = {"+","-","*","/"};
+    
+    if (A.empty())
+    {
+        return -1;
+    }
+    
+    stack<int> work;
+    
+    for (string s : A)
+    {
+        if (ops.find(s) != ops.end())
+        {
+            // string is an operator
+            // stack should contain at least 2 nums
+            if (work.size() < 2)
+            {
+                cout << "Invalid expression\n";
+                return -1;
+            }
+            
+            int b = work.top();
+            work.pop();
+            
+            int a = work.top();
+            work.pop();
+            
+            int result = 0;
+            if (s == "+")
+            {
+                result = a + b;
+            }
+            else if (s == "-")
+            {
+                result = a - b;
+            }            
+            else if (s == "*")
+            {
+                result = a * b;    
+            }  
+            // function retuns int
+            // divide will truncate
+            else if (s == "/")
+            {
+                result = a / b;
+            }        
+            else
+            {
+                cout << "Invalid expression\n";
+                return -1;                
+            }
+            
+            work.push(result);
+        }
+        else
+        {
+            // not an op, should be a digit
+            try
+            {
+               int n = stoi(s); 
+               work.push(n);
+            }
+            catch (invalid_argument)
+            {
+                cout << "Invalid expression\n";
+                return -1;
+            }
+            catch (out_of_range)
+            {
+                cout << "Expression arg out of range\n";
+                return -1;
+            }
+        }
+    }
+    
+    if (work.size() != 1)
+    {
+        cout << "Invalid expression\n";
+        return -1;
+    }
+    
+    return work.top();
+}

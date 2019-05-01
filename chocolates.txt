@@ -1,0 +1,41 @@
+Little Bobby loves chocolate. He frequently goes to his favorite store, Penny Auntie, to buy them. They are having a promotion at Penny Auntie. If Bobby saves enough wrappers, he can turn them in for a free chocolate. 
+
+Complete the chocolateFeast function. It must return the number of chocolates Bobby can eat after taking full advantage of the promotion.
+
+
+
+
+int chocolateFeast(int n, int c, int m) 
+{
+    // n: total amount of money
+    // c: cost of one chocolate
+    // m: number of wrappers that can be swapped for one chocolate
+
+    // numChocolates: return: total chocolates eaten
+    // init to numPurchased
+    int numChocolates = (n / c);
+
+    // numWrappers: total wrappers available for trade-in
+    // init to number of chocolates purchased
+    int numWrappers = numChocolates;
+
+    // loop while there are enough wrappers for a trade-in
+    while (numWrappers >= m) 
+    {
+        // trade in largest number of wrappers divisible by m
+        int numTraded = ((numWrappers / m) * m);
+
+        // eat the chocolates received from the trade 
+        int numEaten = (numTraded / m);
+
+        // numWrappers: number of wrappers not used in this trade
+        // plus wrappers from the chocolates received from the trade
+        numWrappers -= numTraded;
+        numWrappers += numEaten;
+
+        // increment total eaten
+        numChocolates += numEaten;
+    }
+
+    return numChocolates;
+}

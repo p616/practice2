@@ -1,0 +1,47 @@
+// merge 2 sorted arrays, A and B, into A (in place)
+
+void Solution::merge(vector<int> &A, vector<int> &B) 
+{
+    // Do not write main() function.
+    // Do not read input, instead use the arguments to the function.
+    // Do not print the output, instead return values as specified
+    // Still have a doubt. Checkout www.interviewbit.com/pages/sample_codes/ for more details
+
+    int a = A.size();
+    int b = B.size();
+    
+    if (b == 0)
+    {
+        return;
+    }
+    if (a == 0)
+    {
+        A = B;
+        return;
+    }
+    
+    A.resize(a+b);
+    
+    int dest = a+b-1;
+    int i = a-1;
+    int j = b-1;
+    while (i >= 0 && j >= 0)
+    {
+        if (A[i] > B[j])
+        {
+            // copy last value in A to new A (in reverse)
+            A[dest--] = A[i--];
+        }
+        else
+        {
+            // copy last value in B to new B (in reverse)
+            A[dest--] = B[j--];
+        }
+    }
+    
+    while (j >= 0)
+    {
+       // if any values left in B, copy them now
+       A[dest--] = B[j--];
+    }
+}

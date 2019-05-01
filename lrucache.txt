@@ -1,0 +1,127 @@
+#include <list>
+#include <map>
+#include <iterator> 
+#include <utility>
+
+
+
+// Don't have access to the class definition, so, globals...
+
+// list contains the key/value pair, items are added in order of creation
+// the most recently created item will be at the back of the list
+// as existing items are accessed they are moved to the back of the list
+// the least recently used (LRU) item will be at the front of the list
+// when the cache is full, the LRU item is removed to make room
+list<pair<int,int>> g_LRUList;
+
+// <key,value> map for enabling random access to the item in the LRU list
+// key: key associated with the data
+// value: iterator pointing to key/value pair in the list
+map<int,list<pair<int,int>>::iterator> g_LRUMap;
+
+// user specified max capacity for the cache
+int g_capacity;
+
+
+
+// Otherwise, the LRUCache class might look something like this:
+/*
+class LRUCache
+{
+public:
+    LRUCache(int _capacity) : capacity(_capacity) 
+    {
+    }
+    
+    ~LRUCache() {}
+        
+    int get(int key);  
+    void set(int key, int value);
+    
+private:
+    int capacity;
+    
+    list<pair<int,int>> cacheList;
+    map<int,list<air<int,int>>::iterator> iteratorMap;    
+};
+*/
+
+
+
+LRUCache::LRUCache(int capacity) 
+{
+    g_capacity = capacity;
+    
+    // only needed due to interviewbit's stoopid test framework
+    g_LRUList.clear();
+    g_LRUMap.clear();
+}
+
+int LRUCache::get(int key) 
+{
+    // look for this key in our LRU map
+    auto it = g_LRUMap.find(key);
+    
+    // does it exist?
+    if (it == g_LRUMap.end())
+    {
+        // no entry with that key
+        return -1;
+    }
+    
+    // get data from LRU list using iterator from map
+    int value = (*(it->second)).second;
+    
+    // this is now the MRU, move to end of LRU list 
+    g_LRUList.erase(it->second);
+    g_LRUList.push_back({key,value});
+    
+    // update the iterator in the map
+    it->second = g_LRUList.end();
+    advance(it->second, -1);
+    
+    // return data
+    return value;
+}
+
+void LRUCache::set(int key, int value) 
+{   
+    // look for this key in our LRU map
+    auto it = g_LRUMap.find(key);
+    
+    // does the entry already exist?
+    if (it == g_LRUMap.end())
+    {   
+        // brand new request, is the cache full?
+        if (g_LRUList.size() == g_capacity)
+        {
+            // get LRU item's data from the front of the list
+            // use the key to remove it from the LRU
+            auto LRU = g_LRUList.front();
+            
+            // remove the item from the list
+            g_LRUList.pop_front();
+            
+            // remove item from the LRU map using its key
+            g_LRUMap.erase(LRU.first);
+        }
+
+        // add the new key/value pair to the end of the LRU list
+        g_LRUList.push_back({key,value});
+        
+        // add an entry for this item to the LRU map
+        auto itNew = g_LRUList.end();
+        advance(itNew, -1);        
+        g_LRUMap.insert({key,itNew});
+    } 
+    else 
+    {
+        // move existing item from current position in LRU list to end (MRU)
+        g_LRUList.erase(it->second);
+        g_LRUList.push_back({key,value});
+        
+        // update the iterator in the LRU map
+        it->second = g_LRUList.end();
+        advance(it->second, -1);
+    }
+}

@@ -1,0 +1,119 @@
+// count triangles that can be formed from vector
+
+// 1. fails time test
+int Solution::nTriang(vector<int> &A) 
+{
+    if (A.size() < 3)
+    {
+        return 0;
+    }
+    
+    unsigned long long count = 0;
+    int mod = pow(10,9) + 7;
+    
+    for (int i=0; i<A.size()-2; ++i)
+    {
+        for (int j=i+1; j<A.size()-1; ++j)
+        {
+            for (int k=j+1; k<A.size(); ++k)
+            {
+		// sum of every 2 sides must be greater than the 3rd
+                if ( (A[i] + A[j] > A[k]) &&
+                     (A[j] + A[k] > A[i]) &&
+                     (A[k] + A[i] > A[j])
+                   )
+                {
+                    count++;
+                }
+            }
+        }
+    }
+    
+    return count % mod;
+}
+
+
+// 2. also fails time test
+int Solution::nTriang(vector<int> &A) 
+{
+    if (A.size() < 3)
+    {
+        return 0;
+    }
+    
+    // first sort the vector
+    sort(A.begin(), A.end());
+    
+    unsigned long long count = 0;
+    int mod = pow(10,9) + 7;
+    
+    for (int i=0; i<A.size()-2; ++i)
+    {
+        for (int j=i+1; j<A.size()-1; ++j)
+        {
+            int sum = (A[i] + A[j]);
+            
+            for (int k=j+1; k<A.size(); ++k)
+            {
+                // sum of every 2 sides must be greater than the 3rd
+                // or
+                // triangle inequality: if i<j<k then i+j>k
+                if (sum > A[k])
+                {
+                    count++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+    }
+    
+    return (count % mod);
+}
+
+
+3. Works
+
+int Solution::nTriang(vector<int> &A) 
+{
+    if (A.size() < 3)
+    {
+        return 0;
+    }
+    
+    // first sort the vector
+    sort(A.begin(), A.end());
+    
+    // map of possible 3rd sides: 
+    // key = value, value = index
+    multimap<int,int> thirdSides;
+    for (int i=2; i<A.size(); ++i)
+    {
+        thirdSides.insert({A[i],i});  
+    }
+    
+    unsigned long long count = 0;
+    int mod = pow(10,9) + 7;
+    
+    for (int i=0; i<A.size()-2; ++i)
+    {
+        for (int j=i+1; j<A.size()-1; ++j)
+        {
+            // sum of every 2 sides must be greater than the 3rd
+            // or, Triangle Inequality : if i<j<k then i+j>k 
+            // ==> maximum length of 3rd side is sum - 1
+            int sum = (A[i] + A[j]);
+            
+            // it: iterator to first element in 3rd sides map > sum-1
+            // if none are greater, all are valid 3rd sides (index = A.size())
+            // value: index in A of one element greater than the maximum 3rd side
+            // so the distance between index and j are the number of triangles for i,j
+            auto it = thirdSides.upper_bound(sum - 1);
+            count += (it == thirdSides.end() ? A.size() - j - 1 : it->second - j - 1);
+        }
+    }
+    
+    return (count % mod);
+}

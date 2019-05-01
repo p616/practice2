@@ -1,0 +1,73 @@
+Caesar's cipher shifts each letter by a number of letters. 
+
+If the shift takes you past the end of the alphabet, just rotate back to the front of the alphabet. 
+
+
+bool my_isalpha(char ch) 
+{
+  return isalpha(static_cast<unsigned char>(ch));
+}
+
+bool my_isupper(char ch) 
+{
+  return isupper(static_cast<unsigned char>(ch));
+}
+
+// Complete the caesarCipher function below.
+string caesarCipher(string s, int k) 
+{
+    string cipher(s);
+    
+    // if k = 0, encoded = cipher
+    // if k = 26, encoded = cipher
+    // if k = 25, encoded = cipher
+    // etc...
+    k %= 26;
+
+    if (s.empty() || k == 0)
+    {
+        return cipher;
+    }
+
+    for (int i=0; i<cipher.size(); ++i)
+    {
+        if (my_isalpha(cipher[i])) 
+        {
+            // k = 1-25
+            // cipher[i] + k = equivalent of range of 2-51 
+            // max cipher[i] = z = equivalent of 26
+
+            // ex:
+            // z + 1 = equivalent of 26 + 1 = 27
+            // 27 - 26 = 1 = equivalent of 'a'
+            // ex:
+            // z + 25 = equivalent of 26 + 25 = 51
+            // 51 - 26 = 25 = equivalent of 'y'
+
+            // letters can be either upper case or lower case
+            // a-z = 97-122
+            // A-Z = 65-90
+
+            bool isUpperCase = my_isupper(cipher[i]);
+
+            // if 'z' = 122 and k = 10, z + k = 132
+            // 132 > 128 = buffer overrun
+            if ((cipher[i] + k) > CHAR_MAX) 
+            {
+              cipher[i] -= 26;
+            }
+
+            cipher[i] += k;
+
+            // uppercase or cipher[i]+k doesn't overrun buffer
+            if ( (isUpperCase && (cipher[i] > 'Z')) ||
+                 (cipher[i] > 'z') )
+            {
+              cipher[i] -= 26;
+            }
+        }
+    }
+
+    return cipher;
+}
+     

@@ -1,0 +1,39 @@
+void Solution::sortColors(vector<int> &A) 
+{
+    // Dutch flag problem
+    
+    // 0 - lo-1: 0
+    // lo - mid-1: 1
+    // mid - hi: sorting area
+    // hi+1 - end: 2
+    
+    if (A.empty() || A.size() == 1)
+    {
+        return;
+    }
+    
+    int lo = 0;
+    int mid = 0;
+    int hi = A.size()-1;
+    
+    while (mid <= hi)
+    {
+        if (A[mid] == 0)
+        {
+            A[mid] = A[lo];
+            A[lo] = 0;
+            lo++;
+            mid++;
+        }
+        else if (A[mid] == 2)
+        {
+            A[mid] = A[hi];
+            A[hi] = 2;
+            hi--;
+        }
+        else // mid = 1
+        {
+            mid++;
+        }
+    }   
+}
