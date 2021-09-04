@@ -1,0 +1,22 @@
+    int nodeSum(Node *node)
+    {
+        // preorder traversal: HLR
+    
+        if (node == NULL) {
+            return 0;
+        }
+        
+        // save original node data before replacing with L + R subtree sum
+        int origVal = node->data;
+        node->data = nodeSum(node->left) + nodeSum(node->right);
+        
+        // return original node value plus new subtree sum value
+        return (node->data + origVal);
+    }
+  
+    // Convert a given tree to a tree where every node contains sum of values of
+    // nodes in left and right subtrees in the original tree
+    void toSumTree(Node *node)
+    {
+        nodeSum(node);    
+    }
