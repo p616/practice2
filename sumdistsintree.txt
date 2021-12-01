@@ -1,0 +1,45 @@
+class Solution {
+public:
+    vector<int> sumOfDistancesInTree(int n, vector<vector<int>>& edges) 
+    {
+        vector<int> sums(n, 0);
+        
+        vector<vector<int>> paths(n, vector<int>());
+        for (auto v : edges) {
+            paths[v[0]].push_back(v[1]);
+            paths[v[1]].push_back(v[0]);
+        }
+        
+        for (int i=0; i<n; ++i) {
+            int level = 0;
+            
+            vector<bool> visited(n, false);
+                        
+            queue<int> q;
+            q.push(i);
+            
+            while (!q.empty())
+            {
+                level++;
+                
+                int count = q.size();
+                for (int c=0; c<count; ++c) {
+                    int node = q.front();
+                    q.pop(); 
+                    
+                    visited[node] = true;
+                    
+                    for (auto v : paths[node]) {
+                        if (!visited[v]) {
+                            sums[i] += level;
+                            q.push(v);
+                        }
+                    }
+                }
+            }
+        }
+        
+        return sums;
+    }
+
+};
