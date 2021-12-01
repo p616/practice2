@@ -1,0 +1,23 @@
+Rotate array:
+
+Right:
+Input: [1,2,3,4,5,6,7] and k = 3
+Output: [5,6,7,1,2,3,4]
+Explanation:
+rotate 1 steps to the right: [7,1,2,3,4,5,6]
+rotate 2 steps to the right: [6,7,1,2,3,4,5]
+rotate 3 steps to the right: [5,6,7,1,2,3,4]
+
+Left:
+Output: [4,5,6,7,1,2,3]
+
+
+    public void Rotate(int[] nums, int k) 
+    {
+        int len = nums.Count();
+        // right rotate
+        int [] rotated = nums.Skip(len-(k%len)).Concat(nums.Take(len-(k%len))).ToArray(); 
+        // left rotate
+        //int [] rotated = nums.Skip(k%len).Concat(nums.Take(k%len)).ToArray(); 
+        rotated.CopyTo(nums, 0);
+    }

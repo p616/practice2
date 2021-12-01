@@ -1,0 +1,91 @@
+Given a list of words, each word consists of English lowercase letters.
+
+Let's say word1 is a predecessor of word2 if and only if we can add 
+exactly one letter anywhere in word1 to make it equal to word2.  
+For example, "abc" is a predecessor of "abac".
+
+A word chain is a sequence of words [word_1, word_2, ..., word_k] 
+with k >= 1, where word_1 is a predecessor of word_2, 
+word_2 is a predecessor of word_3, and so on.
+
+Return the longest possible length of a word chain with words 
+chosen from the given list of words.
+
+
+    bool isPredecessor(string s, string p)
+    {
+        // checked before called
+        //if ( s.size() > (p.size()+1) )
+        //{
+        //    return false;
+        //}
+        
+        for (int i=0; i<p.size(); ++i)
+        {
+            auto pos = s.find(p[i]);
+            if (pos == string::npos)
+            {
+                return false;
+            }
+            s.erase(pos,1);
+        }
+        
+        return (s.size() == 1);    
+    }
+    
+    int longestStrChain(vector<string>& words) 
+    {       
+        if (words.empty())
+        {
+            return 0;
+        }
+        
+        // sort by lengths
+        sort(words.begin(), words.end(),
+             [] (string a, string b)
+             {
+                 return a.size() < b.size();
+             });
+        
+        // keep track of longest chain so far
+        int longestChain = 1;
+
+        // DP[i] holds longest chain ending in word at index i
+        int DP[words.size()];
+            
+        // for each string, compare with all strings one less in length
+        // if current string is a successor of prev, DP[succ] = DP[pred]+1            
+        int prevLenStart = 0;
+        int currLenStart = 0;
+        for (int i=0; i<words.size(); ++i)
+        {           
+            // update indexes for prev length and curr length when length changes
+            if (words[i].length() > words[currLenStart].length())
+            {               
+                prevLenStart = currLenStart;
+                currLenStart = i;
+            }
+
+            // min chain length for any single value is 1
+            DP[i] = 1;
+            
+            // check all strings one less than current
+            if ( words[i].size() == (words[prevLenStart].size()+1) )
+            {
+                for (int j=prevLenStart; j<currLenStart; ++j)
+                {
+                    if (isPredecessor(words[i],words[j])) 
+                    {
+                        DP[i] = max(DP[i], (DP[j]+1));
+                    }
+                }
+
+                if (DP[i] > longestChain)
+                {
+                    longestChain = DP[i];
+                }
+            }
+        }
+            
+        return longestChain;        
+    }

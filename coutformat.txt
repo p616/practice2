@@ -1,0 +1,34 @@
+Input:
+
+959.139 
+2006.008 
+2331.41592653498
+
+Output:
+
+0x3bf
+_______+2006.01
+2.331415927E+03
+
+            // truncate A (setup to display as HEX)
+            long long n = A;
+           
+            // set width = 0, left justify with no padding
+            cout << setw(0) << left;
+            // show 0x for hex, in lowercase
+            cout << nouppercase << showbase;
+            // display n in hex 
+            cout << hex << n << endl;
+
+            // set width = 15, right justify with '_' padding
+            cout << setw(15) << setfill('_') << right;
+            // show positive signs
+            cout << showpos;
+            // display B in fixed point notation, 2 decimal points
+            cout << fixed << setprecision(2) << B << endl;
+
+            // width of 15 happens to be exactly right
+            // don't show positive signs, do show uppercase
+            cout << noshowpos << uppercase;
+            // display C in scientific notation, 9 decimal places
+            cout << scientific << setprecision(9) << C << endl;

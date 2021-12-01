@@ -1,0 +1,64 @@
+Note: 
+
+Factorials of n > 20 can't be stored even in a 64 bit long long variable. 
+
+Big integers must be used for such calculations. 
+
+Languages like Java, Python, Ruby etc. can handle big integers, but we need to write additional code in C/C++ to handle huge values. 
+
+
+
+// Complete the extraLongFactorials function below.
+void extraLongFactorials(int n) 
+{
+    // special case for n=1
+    if (n == 1)
+    {
+        cout << 1;
+        return;
+    }
+
+    // vector to hold factorial up to n-1
+    // init with 1 = 1!
+    vector<int> v;
+    v.push_back(1);
+    
+    // compute (n-1)!
+    int carry = 0;
+    for (int i = 2; i < n; ++i) 
+    {
+        // multiply i by each digit in factorial vector
+        for (int j = 0; j < v.size(); ++j) 
+        {
+            int prod = ((i * v[j]) + carry);
+            v[j] = (prod % 10);
+            carry = (prod / 10);
+        }
+        // handle left-over carry
+        while (carry != 0) 
+        {
+            v.push_back(carry % 10);
+            carry /= 10;;
+        }
+    }
+
+    // now compute n! = n * (n-1)! = n * v
+    // write values to a string   
+    string s = "";
+    for (int j = 0; j < v.size(); ++j) 
+    {
+      int prod = ((n * v[j]) + carry);
+      s += to_string(prod % 10);
+      carry = (prod / 10);
+    }
+    // handle any left-over carry
+    while (carry != 0) 
+    {
+      s += to_string(carry % 10);
+      carry /= 10;
+    }
+
+    // reverse string and print
+    reverse(s.begin(), s.end());
+    cout << s;
+}

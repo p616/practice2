@@ -1,0 +1,57 @@
+add one to number to number saved in vector: {1,2,3} => {1,2,4}
+
+input could have leading zeros
+output can't
+
+
+vector<int> Solution::plusOne(vector<int> &A) 
+{
+    vector<int> plusOne;
+    
+    if (A.empty())
+    {
+        plusOne.push_back(1);
+        return plusOne;
+    }
+    
+    while (A.front() == 0)
+    {
+        A.erase(A.begin());
+        if (A.empty())
+        {
+            plusOne.push_back(1);
+            return plusOne;
+        }
+    }
+   
+    int carry = 1;
+    int i = (A.size()-1);
+    for (; i>=0; i--)
+    {
+        int sum = A[i] + carry;
+        int digit = sum % 10;
+        carry = sum / 10;
+        plusOne.push_back(digit);
+        if (carry == 0)
+        {
+            break;
+        }
+    }
+    
+    if (carry != 0)
+    {
+        plusOne.push_back(carry);
+    }
+    else
+    {
+        for (int j=i-1; j>=0; j--)
+        {
+            plusOne.push_back(A[j]);
+        }
+    }
+    
+    reverse(plusOne.begin(), plusOne.end());
+    
+    return plusOne;
+    
+}

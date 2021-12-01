@@ -1,0 +1,30 @@
+int Solution::gcd(int A, int B) 
+{
+    if (A == 0)
+    {
+        return B;
+    }
+    if (B == 0)
+    {
+        return A;
+    }
+    
+    int minN = min(A,B);
+    int maxN = max(A,B);
+    
+    int gcd = 1;
+    int divisor = minN;
+    
+    while (divisor >= 2)
+    {
+        if ( ((minN % divisor) == 0) &&
+             ((maxN % divisor) == 0) )
+        {
+            gcd = divisor;
+            break;
+        }
+        divisor--;
+    }
+    
+    return gcd;
+}

@@ -1,0 +1,68 @@
+﻿You are given a huge decimal number consisting of n digits. 
+It is guaranteed that this number has no leading zeros. 
+Each digit of this number is either 0 or 1.
+
+You may perform several (possibly zero) operations with this number. 
+During each operation you are allowed to change any digit of your number; 
+you may change 0 to 1 or 1 to 0. It is possible that after some operation 
+you can obtain a number with leading zeroes, but it does not matter for 
+this problem.
+
+You are also given two integers 0≤y<x<n. 
+Your task is to calculate the minimum number of operations you should 
+perform to obtain the number that has remainder 10^y modulo 10^x. 
+In other words, the obtained number should have remainder 
+10^y when divided by 10^x.
+
+
+
+#include <iostream>
+#include <cmath>
+
+using namespace std;
+
+int main() 
+{
+    // number of digits in bignum
+	int n;
+	cin >> n;
+	
+	// x = divisor power of 10 (divisor = 10^x)
+	int x;
+	cin >> x;
+	
+	// y = remainder power of 10 (remainder = 10^y)
+	int y;
+	cin >> y;
+	
+	// n-digit number as string of zeroes and ones
+	string bignum;
+	cin >> bignum;
+	
+	// find number of digit flips needed in bignum to satisfy:
+	// bignum % (10^x) = (10^y), where 0 <= y < x < n
+	int flips = 0;
+	
+	// max remainder digits = x 
+	// ex: x=2 => divisor=100, max remainder=99
+    // check right x chars of bignum
+    for (int i=n-x; i<n; ++i)
+    {
+        // y MSB pos should be 1, rest should be 0
+        if (i == (n - y - 1))
+        {
+            if (bignum[i] == '0') 
+            {
+                flips++;
+            }
+        }
+        else if (bignum[i] == '1')
+        {
+            flips++;
+        }
+    }
+    
+    cout << flips;
+
+	return 0;
+}

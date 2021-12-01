@@ -1,0 +1,180 @@
+Given a set of reviews provided by the customers for different hotels and a string containing “Good Words”, you need to sort the reviews in descending order according to their “Goodness Value” (Higher goodness value first). We define the “Goodness Value” of a string as the number of “Good Words” in that string.
+
+Note: Sorting should be stable. If review i and review j have the same “Goodness Value” then their original order would be preserved.
+
+Returns indexes in review vector for sort order.
+
+
+
+struct TrieNode
+{
+    TrieNode() : c('\0'), isWord(false) {};
+    
+    char c;
+    bool isWord;
+    
+    vector<TrieNode*> children;   
+};
+
+
+class Trie
+{
+public:
+    Trie();
+    ~Trie() {}
+    
+    void add(string w);
+    bool find(string w);
+
+private:    
+    TrieNode *head;
+};
+
+
+Trie::Trie()
+{
+    head = new TrieNode();
+}
+
+void
+Trie::add(string w)
+{
+    TrieNode *node = NULL;
+
+    TrieNode *p = head;
+    for (char c : w)
+    {
+        node = NULL;
+
+        // find node for c in children
+        for (TrieNode *n : p->children)
+        {
+            if (n->c == c)
+            {
+                node = n;
+                break;
+            }
+        }
+
+        // if node not found create one
+        if (node == NULL)
+        {
+            node = new TrieNode();
+            node->c = c;
+            p->children.push_back(node);
+        }
+
+        p = node;
+    }
+    
+    node->isWord = true;
+}
+
+bool 
+Trie::find(string w)
+{
+    TrieNode *node = NULL;
+
+    TrieNode *p = head;
+    for (int i=0; i<w.size(); ++i)  
+    {
+        node = NULL;
+        
+        // find node for c in children
+        for (TrieNode *n : p->children)
+        {
+            if (n->c == w[i])
+            {
+                node = n;
+                break;
+            }
+        }
+        
+        // if node not found, error
+        if (node == NULL)
+        {
+            return false;
+        }
+        
+        p = node;
+    }
+    
+    return node->isWord;
+}
+
+vector<int> Solution::solve(string A, vector<string> &B) 
+{
+    vector<int> indexes;
+    
+    // special case: no reviews
+    if (B.size() == 0)
+    {
+        return indexes;
+    }
+    // special case: 1 review, no need to sort
+    if (B.size() == 1)
+    {
+        indexes.push_back(1);
+        return indexes;
+    }
+    // special case: no good words, keep same order
+    if (A.size() == 0)
+    {
+        for (int i=0; i<B.size(); ++i)
+        {
+            indexes.push_back(i);
+        }
+        return indexes;
+    }
+    
+    // add good words to a Trie
+    Trie t;
+    int pos = A.find('_');
+    while (pos != string::npos)
+    {
+        string s = A.substr(0, pos++);
+        t.add(s);
+        
+        A = A.substr(pos, A.size()-pos);
+        pos = A.find('_');
+    }
+    // last one
+    t.add(A);
+ 
+    // map 
+    multimap<int,int,std::greater<int>> goodnessScores;
+    
+    // loop through reviews
+    for (int i=0; i<B.size(); ++i)
+    {
+        string review = B[i];
+        int goodness = 0;
+        
+        int pos = review.find('_');
+        while (pos != string::npos)
+        {
+            string s = review.substr(0, pos++);
+            if (t.find(s) == true)
+            {
+                goodness++;
+            }
+            
+            review = review.substr(pos, review.size()-pos);
+            pos = review.find('_');
+        }
+        // last one
+        if (t.find(review) == true)
+        {
+            goodness++;
+        }
+        
+        goodnessScores.insert({goodness, i});
+    }
+    
+    for (auto it = goodnessScores.begin(); it != goodnessScores.end(); ++it)
+    {
+        indexes.push_back(it->second);
+    }
+    
+    return indexes;
+}

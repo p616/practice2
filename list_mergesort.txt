@@ -1,0 +1,122 @@
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+ 
+
+void SplitList(ListNode *root, ListNode *& left, ListNode *& right)
+{
+    if (root == NULL)
+    {
+        return;
+    }
+
+    if (root->next == NULL)
+    {
+        left = root;
+        right = root->next;
+        return;
+    }
+
+    // slow pointer
+    left = root;
+    // fast pointer
+    right = root;
+
+    // walk left (slow) pointer 1x1
+    // walk right (fast) pointer 2x2
+    ListNode *prev = NULL;
+    while ((right != NULL) && (right->next != NULL))
+    {
+        prev = left;
+        left = left->next;
+        right = right->next->next;
+    }
+
+    // right is now in the middle
+    // set right = left and left back to front
+    right = left;
+    left = root;
+    prev->next = NULL;
+}
+
+ListNode* mergeLists(ListNode *A, ListNode* left, ListNode* right)
+{
+    if (A == NULL)
+    {
+        return A;
+    }
+
+    if (right == NULL)
+    {
+        return left;
+    }
+
+    if (left == NULL)
+    {
+        return right;
+    }
+
+    A = left;
+
+    ListNode *prev = NULL;
+    while ( (left != NULL) && (right != NULL) )
+    {
+        if (left->val < right->val)
+        {
+            prev = left;
+            left = left->next;
+        }
+        else
+        {
+            ListNode *next = right->next;
+            if (prev == NULL)
+            {
+                A = right;
+            }
+            else
+            {
+                prev->next = right;
+            }
+            right->next = left;
+
+            prev = right;
+            right = next;
+        }
+    }
+
+    if (right != NULL)
+    {
+        prev->next = right;
+    }
+    
+    return A;
+}
+
+ListNode* Solution::sortList(ListNode *A)
+{
+    if (A == NULL)
+    {
+        return NULL;
+    }
+
+    if (A->next == NULL)
+    {
+        return A;
+    }
+
+    // recursively divide the list into smallest possible left and right
+    ListNode *left = A;
+    ListNode *right = A;
+    SplitList(A, left, right);
+
+    left = sortList(left);
+    right = sortList(right);
+    A = mergeLists(A, left, right);
+
+    return A;
+}

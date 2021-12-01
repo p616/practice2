@@ -1,0 +1,35 @@
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+int Solution::minDepth(TreeNode* A) 
+{
+    if (A == NULL) 
+    {
+        return 0;
+    }
+    
+    // Don't want to call with NULL for single child node nodes or min always = 1
+    // Only time minDepth should return 1 is for root with no children
+    // So if only one child, return the minDepth of that child
+    // For single root case will return 1 from minDepth(A->right)
+    if (A->left == NULL)
+    {
+        return (minDepth(A->right) + 1);
+    }
+    if (A->right == NULL)
+    {
+        return (minDepth(A->left) + 1);
+    }
+    
+    // 2 children : return min of those children
+    int lDepth = minDepth(A->left) + 1;
+    int rDepth = minDepth(A->right) + 1;
+    
+    return min(lDepth,rDepth);
+}

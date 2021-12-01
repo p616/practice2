@@ -1,0 +1,35 @@
+#include <iostream>
+#include <string>
+#include <cstring>
+
+using namespace std;
+
+void removeSpaces(string &s)
+{
+    int pos = s.rfind(' ');
+    while (pos != string::npos)
+    {
+        // one liner
+        s.erase(pos,1);
+        
+        // two liner
+        //const char* src = &s[pos+1];
+        //s.replace(pos, s.size()-pos-1, src, s.size()-pos-2);
+        
+        // four liner
+        //char* dst = &s[pos];
+        //const char* src = &s[pos+1];
+        //strcpy(dst, src);
+        //s.pop_back();
+        
+        pos = s.rfind(' ');
+    }
+}
+
+int main() 
+{
+	string s = "Hi how are you?";
+	removeSpaces(s);
+	cout << s;
+	return 0;
+}

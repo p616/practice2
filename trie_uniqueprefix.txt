@@ -1,0 +1,144 @@
+Find shortest unique prefix to represent each word in the list.
+
+Input: [zebra, dog, duck, dove]
+Output: {z, dog, du, dov}
+
+
+struct TrieNode
+{
+    TrieNode() : c('\0') {};
+    
+    char c;
+    vector<TrieNode*> children;   
+};
+
+class Trie
+{
+public:
+    Trie();
+    ~Trie() {}
+    
+    void add(string w);
+    string uniquePrefix(string w);
+
+private:    
+    TrieNode *head;
+};
+
+Trie::Trie()
+{
+    head = new TrieNode();
+}
+
+void
+Trie::add(string w)
+{
+    TrieNode *p = head;
+    for (char c : w)
+    {
+        TrieNode *node = NULL;
+
+        // find node for c in children
+        for (TrieNode *n : p->children)
+        {
+            if (n->c == c)
+            {
+                node = n;
+                break;
+            }
+        }
+
+        // if node not found create one
+        if (node == NULL)
+        {
+            node = new TrieNode();
+            node->c = c;
+            p->children.push_back(node);
+        }
+
+        p = node;
+    }
+}
+
+string 
+Trie::uniquePrefix(string w)
+{
+    stack<TrieNode*> s;
+    
+    TrieNode *p = head;
+    for (int i=0; i<w.size()-1; ++i)  
+    {
+        TrieNode *node = NULL;
+        
+        // find node for c in children
+        for (TrieNode *n : p->children)
+        {
+            if (n->c == w[i])
+            {
+                node = n;
+                break;
+            }
+        }
+        
+        // if node not found, error
+        if (node == NULL)
+        {
+            return "";
+        }
+        
+        // push this node to the stack
+        s.push(node);
+        
+        p = node;
+    }
+    
+    string pre = w;
+    
+    while (!stack.empty())
+    {
+        TrieNode *node = stack.top();
+        stack.pop();
+        
+        if (node->children.size() > 1)
+        {
+            break;
+        }
+        
+        pre.pop_back();
+    }
+    
+    return pre;   
+}
+
+vector<string> Solution::prefix(vector<string> &A) 
+{
+    vector<string> ret;
+    
+    // special case : empty vector
+    if (A.size() == 0)
+    {
+       return ret; 
+    }
+    // special case : one string
+    // unique prefix is first letter of string
+    if (A.size() == 1)
+    {
+        ret.push_back(to_string(A[0][0]));     
+    }
+    
+    // add all strings to the Trie
+    Trie t;
+    for (string s : A)
+    {
+        t.add(s);
+    }
+    
+    // get unique prefix for each string from Trie
+    for (string s : A)
+    {
+        string pre = t.uniquePrefix(s);
+        ret.push_back(pre);
+    }
+    
+    return ret;
+}

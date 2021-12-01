@@ -1,0 +1,60 @@
+    int getSum(int a, int b) 
+    {
+        // if both negative, make positive
+        // then turn sum negative after calculated
+        bool negate = false;
+        if ( (a < 0) && (b < 0) )
+        {
+            a *= -1;
+            b *= -1;
+            negate = true;
+        }
+        
+        // ensure b is smaller number in case is negative
+        int sum = max(a,b);
+        b = min(a,b);
+        
+        // # - #
+        if (-sum == b)
+        {
+            return 0;
+        }
+        
+        // if b negative -> a positive
+        if (b < 0)
+        {
+            // HACK
+            if (b == INT_MIN)
+            {
+                return -1;   
+            }
+            
+            // make b positive
+            b *= -1;
+            
+            // and subtract from a
+            while (b > 0)
+            {
+                int borrow = ((~sum) & b);
+                sum ^= b;
+                b = (borrow << 1);
+            }
+        }
+        else
+        {       
+            // normal positive numbers add
+            while (b > 0)
+            {
+                int carry = (sum & b);
+                sum ^= b;
+                b = (carry << 1);            
+            }            
+        }
+        
+        if (negate)
+        {
+            sum *= -1;
+        }
+        
+        return sum;
+    }

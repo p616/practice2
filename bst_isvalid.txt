@@ -1,0 +1,74 @@
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+ 
+int SubTreeMax(TreeNode *A)
+{
+    if (A == NULL)  
+    {
+        return INT_MIN;
+    }
+    
+    while (A->right != NULL)
+    {
+        A = A->right;
+    }
+    
+    return A->val;
+}
+
+int SubTreeMin(TreeNode *A)
+{
+    if (A == NULL)  
+    {
+        return INT_MAX;
+    }
+    
+    while (A->left != NULL)
+    {
+        A = A->left;
+    }
+    
+    return A->val;
+}
+
+int Solution::isValidBST(TreeNode* A) 
+{
+    if (A == NULL)
+    {
+        return 0;
+    }
+    
+    if (A->left == NULL && A->right == NULL)
+    {
+        return 1;
+    }
+    
+    // max in left tree must be less than A->val
+    if (SubTreeMax(A->left) >= A->val)
+    {
+        return 0;
+    }
+    // min in right tree must be greater than A->val
+    if (SubTreeMin(A->right) <= A->val)
+    {
+        return 0;
+    }
+    
+    // and both left and right subtrees must also be BST's
+    if (A->left != NULL)
+    {
+        if (isValidBST(A->left) == 0)
+        {
+            return 0;
+        }
+    }
+    
+    return (A->right == NULL ? 1 : isValidBST(A->right));
+}

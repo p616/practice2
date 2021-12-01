@@ -1,0 +1,7 @@
+move zeroes to end of array
+
+    public void MoveZeroes(int[] nums) 
+    {
+        int [] moved = nums.Where((x)=>x!=0).Concat(nums.Where((x)=>x==0)).ToArray();
+        moved.CopyTo(nums, 0);
+    }

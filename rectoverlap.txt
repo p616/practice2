@@ -1,0 +1,16 @@
+rec = [x1,y1,x2,y2] where x1,y1 = bottom left corner, x2,y2 = top right
+    
+    
+    bool isRectangleOverlap(vector<int>& rec1, vector<int>& rec2) 
+    {  
+        // no x overlap: 
+        // ------  +++ OR ------+++
+        // min(right) <= max(left) --> min(x2's) <= max(x1's)
+        bool xOverlap = ( min(rec1[2], rec2[2]) > max(rec1[0], rec2[0]) );  
+        
+        // similarly, no y overlap: 
+        // min(top) <= max(bottom) --> min(y2's) <= max(y1's)
+        bool yOverlap = ( min(rec1[3], rec2[3]) > max(rec1[1], rec2[1]) );  
+        
+        return (xOverlap && yOverlap);
+    }

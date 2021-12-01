@@ -1,0 +1,54 @@
+Given an array of strings, 
+return all groups of strings that are anagrams. 
+Represent a group by a list of integers representing 
+the index in the original list. 
+
+Input : cat dog god tca
+Output : [[1, 4], [2, 3]]
+
+
+vector<vector<int> > Solution::anagrams(const vector<string> &A) 
+{
+    vector<vector<int>> ret;
+    
+    if (A.size() < 2)
+    {
+        return ret;
+    }
+    
+    // hashing function for strings
+    hash<string> hash_fn;    
+
+    // key = hash, value = index of row in ret vector
+    map<size_t,int> hashes;
+    
+    // next row in ret vector
+    int numHashes = 0;
+    
+    for (int i=0; i<A.size(); ++i)
+    {
+        // sort and hash
+        string s = A[i];
+        sort(s.begin(), s.end());
+        size_t hash = hash_fn(s);
+        
+        auto it = hashes.find(hash);
+        if (it == hashes.end())
+        {
+            // first one, add to map
+            hashes[hash] = numHashes++;
+            
+            // create new row in vector
+            vector<int> v;
+            v.push_back(i+1);
+            ret.push_back(v);
+        }
+        else
+        {
+            // add to matching row in vector
+            ret[it->second].push_back(i+1);   
+        }
+    }
+    
+    return ret;
+}

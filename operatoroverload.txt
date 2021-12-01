@@ -1,0 +1,39 @@
+class Box  
+{
+public:
+    Box() : l(0), b(0), h(0) {}
+    Box(int _l, int _b, int _h) : l(_l), b(_b), h(_h) {}
+    Box(Box &box) : l(box.l), b(box.b), h(box.h) {}
+
+    int getLength() { return l; }
+    int getBreadth() { return b; }
+    int getHeight() { return h; }
+
+    long long CalculateVolume() 
+    { return ((long long)l * (long long)b * (long long)h); }
+
+    bool operator<(Box& box)
+    {
+        if (box.l == l)
+        {
+            if (box.b == b)
+            {
+                return h < box.h;
+            }
+            return b < box.b;
+        }
+        return l < box.l;
+    }
+
+    friend ostream &operator<<(ostream &os, const Box &box)
+    {
+        os << box.l << ' ' << box.b << ' ' << box.h;
+        return os;
+    }
+
+  private:
+    int l;
+    int b;
+    int h;
+
+};

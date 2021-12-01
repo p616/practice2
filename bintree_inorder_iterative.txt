@@ -1,0 +1,37 @@
+    vector<int> inorderTraversal(TreeNode* root) 
+    {
+        vector<int> inorder;
+
+        if (root == NULL)
+        {
+           return inorder;
+        }   
+                
+        stack<TreeNode*> s;        
+        TreeNode *node = root;
+        
+        while (!s.empty() || node != NULL)
+        {
+            // L
+            // push node and its lefts
+            while (node != NULL)
+            {
+                s.push(node);
+                node = node->left;
+            }
+            
+            // H / visit
+            node = s.top();
+            s.pop();    
+            inorder.push_back(node->val);
+            
+            // R
+            // if node->right = null,
+            // next loop will pull from stack
+            // otherwise will push right and its lefts
+            // if it has no lefts, will repop
+            node = node->right;
+        }
+        
+        return inorder;
+    }

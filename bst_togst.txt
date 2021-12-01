@@ -1,0 +1,67 @@
+Convert BST to Greater Sum Tree:
+
+Given the root of a binary search tree with distinct values, 
+modify it so that every node has a new value equal to the sum 
+of the values of the original tree that are greater than or 
+equal to node.val.
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+
+class Solution {
+public:
+    TreeNode* bstToGst(TreeNode* root) 
+    {
+        TreeNode *node = root;        
+        if (node == NULL)
+        {
+            return NULL;
+        }
+        
+        // do reverse inorder traversal: RHL
+                
+        // R
+        node = root->right;
+        if (node != NULL)
+        {
+            // Convert right tree
+            bstToGst(root->right);
+            
+            // H
+            // Get MAX node in right tree = GST = left-most           
+            while (node->left != NULL)
+            {
+                node = node->left;
+            }
+            
+            // Update root value
+            root->val += node->val;
+        }
+        
+        // L
+        node = root->left;
+        if (node != NULL)
+        {
+            // Get MAX node in left tree = BST = right-most
+            while (node->right != NULL)
+            {
+                node = node->right;
+            } 
+            
+            // Update MAX left tree value
+            node->val += root->val;
+            
+            // Convert left tree
+            bstToGst(root->left);            
+        }
+        
+        return root;
+    }
+};

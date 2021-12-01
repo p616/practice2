@@ -1,0 +1,223 @@
+// TIMES OUT
+
+struct TrieNode
+{
+    TrieNode() : c('\0'), isContact(false) {};
+    ~TrieNode() {}
+
+    char c;
+    bool isContact;
+
+    vector<TrieNode*> children;
+};
+
+class Trie
+{
+public:
+    Trie();
+    ~Trie();
+
+    void add(string w);
+    unsigned findContacts(string s);
+
+private:
+    TrieNode *head;
+
+    unsigned countChildContacts(TrieNode *node);
+};
+
+Trie::Trie()
+{
+    head = new TrieNode();
+}
+
+Trie::~Trie()
+{
+    delete head;
+}
+
+void
+Trie::add(string w)
+{
+    TrieNode *node = NULL;
+
+    TrieNode *p = head;
+    for (char c : w)
+    {
+        node = NULL;
+
+        // find node for c in children
+        for (TrieNode *n : p->children)
+        {
+            if (n->c == c)
+            {
+                node = n;
+                break;
+            }
+        }
+
+        // if node not found create one
+        if (node == NULL)
+        {
+            node = new TrieNode();
+            node->c = c;
+            p->children.push_back(node);
+        }
+
+        p = node;
+    }
+
+    node->isContact = true;
+}
+
+unsigned 
+Trie::findContacts(string s)
+{
+    TrieNode *node = NULL;
+
+    TrieNode *p = head;
+    for (char c : s)
+    {
+        node = NULL;
+
+        // find node for c in children
+        for (TrieNode *n : p->children)
+        {
+            if (n->c == c)
+            {
+                node = n;
+                break;
+            }
+        }
+
+        // if prefix !found return 0
+        if (node == NULL)
+        {
+            return 0;
+        }
+
+        p = node;
+    }
+
+    unsigned count = node->isContact;
+    count += countChildContacts(node);
+    return count;
+}
+
+unsigned 
+Trie::countChildContacts(TrieNode *node) 
+{
+    if (node->children.empty())
+    {
+        return 0;
+    }
+
+    unsigned int count = 0;
+    for (TrieNode *child : node->children)    
+    {       
+        if (child->isContact)
+        {
+            count++;
+        }
+        count += countChildContacts(child);
+    }
+
+    return count;
+}
+
+
+
+// TIMES OUT, BUT LESS CASES
+
+struct TrieNode
+{
+    TrieNode() : isContact(false) {} 
+    ~TrieNode() {}
+
+    bool isContact;
+    map<char,TrieNode*> children;
+};
+
+class Trie
+{
+public:
+    Trie();
+    ~Trie();
+
+    void add(string w);
+    unsigned findContacts(string s);
+
+private:
+    TrieNode *head;
+
+    unsigned countChildContacts(TrieNode *node);
+};
+
+Trie::Trie()
+{
+    head = new TrieNode();
+}
+
+Trie::~Trie()
+{
+    delete head;
+}
+
+void
+Trie::add(string w)
+{
+    TrieNode *node = head;
+    for (char c : w)
+    {
+        // if child node for c NULL create one
+        if (node->children[c] == NULL)
+        {
+            node->children[c] = new TrieNode();
+        }
+
+        node = node->children[c];
+    }
+
+    node->isContact = true;
+}
+
+unsigned 
+Trie::findContacts(string s)
+{
+    TrieNode *node = head;
+    for (char c : s)
+    {
+        // if no child node for c, prefix not found
+        if (node->children.find(c) == node->children.end()) 
+        {
+            return 0;
+        }
+
+        node = node->children[c];
+    }
+
+    unsigned count = node->isContact;
+    count += countChildContacts(node);
+    return count;
+}
+
+unsigned 
+Trie::countChildContacts(TrieNode *node) 
+{
+    if (node->children.empty())
+    {
+        return 0;
+    }
+
+    unsigned int count = 0;
+    for (auto &child : node->children)    
+    {       
+        if (child.second->isContact)
+        {
+            count++;
+        }
+        count += countChildContacts(child.second);
+    }
+
+    return count;
+}

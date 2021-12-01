@@ -1,0 +1,250 @@
+Return top K most frequent words in a vector.
+
+(ALT VERSION FOLLOWS, NO TRIE, FASTER)
+
+class TrieNode
+{
+public:
+    // create/destroy
+    TrieNode(char c = '\0') : ch_(c), isWord_(false), count_(0) {}
+    ~TrieNode() {}
+
+    // get char key
+    char CharKey() { return ch_; }
+
+    // get/set word flag
+    bool IsWord() { return isWord_; }
+    void IsWord(bool val) { isWord_ = val; }
+
+    // get/set frequency
+    unsigned GetCount() { return count_; }
+    void IncrementCount() { count_++; }
+
+    // get children
+    const map<char, TrieNode*>& Children() { return children_; }
+
+    // add child
+    void AddChild(TrieNode *node) { children_.insert({ node->ch_, node }); }
+
+private:
+    char ch_;
+    bool isWord_;
+    unsigned count_;
+
+    // sorted map of chars (key = a-z, unique) to node (value)
+    map<char, TrieNode*> children_;
+};
+
+class Trie
+{
+public:
+    Trie() : root(new TrieNode()) {}
+    ~Trie()
+    {
+        // TODO: And the rest...
+        delete root;
+    }
+
+    void Add(string s);
+    bool Find(string s, unsigned &count);
+
+    // returns sorted strings and their frequencies
+    vector<pair<string, unsigned>> PreOrder();
+
+private:
+    TrieNode *root;
+
+    void PreOrder_(TrieNode *node, string path, vector<pair<string, unsigned>>& s);
+};
+
+void
+Trie::Add(string s)
+{
+    TrieNode *node = root;
+    for (char c : s)
+    {
+        auto it = node->Children().find(c);
+        if (it == node->Children().end())
+        {
+            // add it
+            TrieNode *newNode = new TrieNode(c);
+            node->AddChild(newNode);
+            node = newNode;
+        }
+        else
+        {
+            node = it->second;
+        }
+    }
+
+    // TrieNode node = node for last char in word
+    node->IsWord(true);
+
+    // Track how many times the same word added
+    node->IncrementCount();
+}
+
+bool
+Trie::Find(string s, unsigned &count)
+{
+    TrieNode *node = root;
+    for (char c : s)
+    {
+        auto it = node->Children().find(c);
+        if (it == node->Children().end())
+        {
+            return false;
+        }
+
+        node = it->second;
+    }
+
+    // node points to TrieNode for last char in searched word    
+    bool isWord = node->IsWord();
+    if (isWord)
+    {
+        count = node->GetCount();
+    }
+    return isWord;
+}
+
+vector<pair<string, unsigned>>
+Trie::PreOrder()
+{
+    vector<pair<string, unsigned>> v;
+    string path = "";
+
+    PreOrder_(root, path, v);
+    return v;
+}
+
+void
+Trie::PreOrder_(TrieNode *node, string path, vector<pair<string, unsigned>>& s)
+{
+    if (node == NULL)
+    {
+        return;
+    }
+
+    if (node->CharKey() != '\0')
+    {
+        path.append(1, node->CharKey());
+    }
+
+    // have we found a word?
+    if (node->IsWord())
+    {
+        // save current string + current node char to output vector
+        s.push_back({ path, node->GetCount() });
+    }
+
+    // possible for 2 words to be on the same path, so keep going (to leaf)
+    for (auto & child : node->Children())
+    {
+        // child.first = char
+        // child.second = TrieNode*
+        // append current node char and try the child path
+        PreOrder_(child.second, path, s);
+    }
+}
+
+class Solution {
+public:
+
+    vector<string> topKFrequent(vector<string>& words, int k)
+    {
+        vector <string> v;
+        if (words.empty() || (k == 0))
+        {
+            return v;
+        }
+
+        // stores strings (sorted) in Trie, along with their frequencies 
+        Trie t;
+        for (string & w : words)
+        {
+            // add to trie 
+            t.Add(w);
+        }
+
+        // preorder traversal of Trie returns sorted strings and their frequencies
+        vector<pair<string, unsigned>> sorted = t.PreOrder();
+
+        // iterate through the pruned and sorted vector and create multimap
+        // of strings and their frequencies, sorted (in descending order) 
+        // by frequency (when key = frequency is duplicated, sort order is 
+        // order of input = subsorted by string)
+        multimap<unsigned, string, std::greater<unsigned>> frequencyMap;
+        for (auto p : sorted)
+        {
+            frequencyMap.insert({ p.second, p.first });
+        }
+
+        // NOTE : 
+        // Could accomplish the same by calling sort on original vector
+        // and iterating through the sorted vector to create a counting 
+        // map (unordered_map<string,unsigned>) which prunes the list, 
+        // same as preorder traveral. Then could iterate that map to =
+        // create the multimap sorted by frequency.
+
+        // Either way, must turn the multimap into a string vector of size K
+
+        // return the first k strings in frequency map
+        for (auto p : frequencyMap)
+        {
+            v.push_back(p.second);
+            if (--k == 0)
+            {
+                break;
+            }
+        }
+
+        return v;
+    }
+};
+
+
+
+// ALT : NO TRIE
+// FASTER : FROM BEATS 10% to BEATS 92@%
+
+class Solution {
+public:
+
+    vector<string> topKFrequent(vector<string>& words, int k)
+    {
+        vector <string> v;
+        if (words.empty() || (k == 0))
+        {
+            return v;
+        }
+        
+        // create ordered map of word frequencies from input, sorted by string
+        // prunes dupes
+        map<string,unsigned> frequencyMap1;
+        for (string s : words)
+        {
+            frequencyMap1[s]++;
+        }
+        
+        // create ordered multimap of word frequencies from map, sorted by frequency
+        // subsorted by string
+        multimap<unsigned, string, std::greater<unsigned>> frequencyMap2;
+        for (auto p : frequencyMap1)
+        {
+            frequencyMap2.insert({ p.second, p.first });
+        }
+
+        // return the first k strings in frequency multimap
+        for (auto p : frequencyMap2)
+        {
+            v.push_back(p.second);
+            if (--k == 0)
+            {
+                break;
+            }
+        }
+
+        return v;
+    }
+};

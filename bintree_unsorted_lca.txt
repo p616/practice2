@@ -1,0 +1,110 @@
+LCA for UNSORTED binary tree
+
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+ 
+bool FindInTree(TreeNode *A, int n)
+{
+    if (A == NULL)
+    {
+        return false;
+    }
+    
+    if (A->val == n)
+    {
+        return true;
+    }
+    
+    return ( FindInTree(A->left, n) || FindInTree(A->right, n) );
+}
+
+int Solution::lca(TreeNode* A, int B, int C) 
+{
+    if (A == NULL)
+    {
+        return -1;
+    }
+    
+    // if B == C == this node:
+    // this is lca
+    if ( (A->val == B) && (A->val == C) )
+    {
+        return A->val;
+    }
+    
+    // if this is B or C node:
+    // as long as other val is in subtree, this is lca
+    if (A->val == B)
+    {
+        if ( FindInTree(A->left, C) || FindInTree(A->right, C) )
+        {
+            return A->val;
+        }
+        else
+        {
+            return -1;
+        }
+    }
+    else if (A->val == C)
+    {
+        if ( FindInTree(A->left, B) || FindInTree(A->right, B) )
+        {
+            return A->val;
+        }
+        else
+        {
+            return -1;
+        }        
+    }
+    
+    // if B found in left tree
+    if (FindInTree(A->left, B))
+    {
+        // if C found in right tree, this is lca
+        if (FindInTree(A->right, C))
+        {
+            return A->val;
+        }
+        else if (FindInTree(A->left, C))
+        {
+            // both in left tree
+            return lca(A->left, B, C);
+        }
+        else
+        {
+            // C not found
+            return -1;
+        }
+    }
+    
+    // if B found in right tree
+    if (FindInTree(A->right, B))
+    {
+        // if C found in left tree, this is lca
+        if (FindInTree(A->left, C))
+        {
+            return A->val;
+        }
+        else if (FindInTree(A->right, C))
+        {
+            // both in right tree
+            return lca(A->right, B, C);
+        }
+        else
+        {
+            // C not found
+            return -1;
+        }
+    }
+    
+    // B not found
+    return -1;
+}
+   

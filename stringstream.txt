@@ -1,0 +1,61 @@
+#include <sstream>
+#include <vector>
+#include <iostream>
+using namespace std;
+
+
+vector<int> parseInts(string str) 
+{
+     vector<int> v;
+
+    stringstream ss(str);
+    while (!ss.eof())
+    {
+        int n;
+        char ch;
+        ss >> n >> ch;
+        v.push_back(n);
+    }
+
+    return v;
+}
+
+// input 23,42,33
+int main() {
+    string str;
+    cin >> str;
+    vector<int> integers = parseInts(str);
+    for(int i = 0; i < integers.size(); i++) {
+        cout << integers[i] << "\n";
+    }
+    
+    return 0;
+}
+
+class Student
+{
+public:
+    void set_age(int _age) { age = _age; }
+    void set_standard(int _std) { standard = _std; }
+    void set_first_name(string s) { first_name = s;}
+    void set_last_name(string s) { last_name = s; }
+
+    int get_age() { return age; }
+    int get_standard() { return standard; }
+    string get_first_name() { return first_name; }
+    string get_last_name() { return last_name; }
+
+    // 15,john,smith,10
+    string to_string()
+    {
+        stringstream ss;
+        ss << age << "," << first_name << "," << last_name << "," << standard;
+        return ss.str();
+    }
+
+  private:
+    int age;
+    int standard;
+    string first_name;
+    string last_name;
+};

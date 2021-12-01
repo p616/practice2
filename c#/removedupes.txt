@@ -1,0 +1,6 @@
+    public int RemoveDuplicates(int[] nums) 
+    {  
+        int [] uniquenums = nums.Distinct().ToArray();
+        uniquenums.CopyTo(nums, 0);
+        return uniquenums.Count();
+    }

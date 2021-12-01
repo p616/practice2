@@ -1,0 +1,30 @@
+// if number found in vector print Yes + 1+based index
+// else print No + 1+based index of number just greater
+
+int main() {
+    /* Enter your code here. Read input from STDIN. Print output to STDOUT */   
+    int n;
+    cin >> n;
+
+    vector<int> v;
+    for (int i=0; i<n; ++i)
+    {
+        int x;
+        cin >> x;
+        v.push_back(x);
+    }
+
+    int q;
+    cin >> q;
+
+    for (int i=0; i<q; ++i)
+    {
+        int findnum;
+        cin >> findnum;
+
+        auto low = lower_bound(v.begin(), v.end(), findnum);
+        cout << (*low == findnum ? "Yes " : "No ");
+        cout << low-v.begin()+1 << endl;
+    }
+    return 0;
+}
